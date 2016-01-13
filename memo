@@ -1,0 +1,17 @@
+vendor/bin/cap
+cap collect:affiliateLog:ppvs         # ppv抽出
+cap collect:affiliateLog:uids         # UID抽出
+cap collect:cron:aupass_mau           # 今月のMAU
+cap collect:referer:aupass_download   # スマパスログファイルダウンロード
+cap collect:user_session:active_user  # UIDユニーク(指定期間)
+cap collect:user_session:dau          # UIDユニーク(日別)
+cap collect:user_session:dau_count    # UIDユニーク数(日別)
+cap collect:user_session:download     # ファイルダウンロード
+cap collect:user_session:mau          # UIDユニーク(月別)
+cap collect:user_session:mau_count    # UIDユニーク数(月別)
+cap collect:user_session:pv_count     # PV(指定期間)
+
+http://redmine.mkb-mobile.jp/issues/9946#change-35650
+http://redmine.mkb-mobile.jp/issues/8115#change-35776
+http://redmine.mkb-mobile.jp/issues/9950#change-35693
+http://redmine.mkb-mobile.jp/issues/9938#change-35666
