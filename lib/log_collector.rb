@@ -118,7 +118,7 @@ class LogCollector
     FileUtils.rm_r(Dir.glob("#{@tmp_path}/*"))
   end
 
-  def set_collect_carriers
+  def get_collect_carriers
     if @collect_carriers == "all"
       return CARRIERS
     end
@@ -128,7 +128,7 @@ class LogCollector
 
   # UIDユニーク(日別)
   def get_dau
-    carriers = self.set_collect_carriers
+    carriers = self.get_collect_carriers
     results = {}
 
     @sites.each { |site|
@@ -182,7 +182,7 @@ class LogCollector
 
   # UIDユニーク(指定期間)
   def get_user_session
-    carriers = self.set_collect_carriers
+    carriers = self.get_collect_carriers
     results = {}
 
     @sites.each { |site|
