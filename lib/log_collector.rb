@@ -14,6 +14,7 @@ class LogCollector
   @end_date
 
   @collect_carriers
+  @grep_key
   @tmp_path
   @ssh_passwd
 
@@ -33,6 +34,7 @@ class LogCollector
     end
 
     @collect_carriers = "all"
+    @grep_key = GREP_KEY
     @tmp_path = tmp_path
     @ssh_passwd = ssh_passwd
   end
@@ -52,8 +54,19 @@ class LogCollector
     return true
   end
 
+  def set_grep_key(grep_key)
+    @grep_key = grep_key
+  end
+
   def set_collect_carriers(carriers)
     @collect_carriers = carriers
+  end
+  def get_collect_carriers
+    if @collect_carriers == "all"
+      return CARRIERS
+    end
+
+    return @collect_carriers
   end
 
   def make_tmp_file_path(file_name, date)
@@ -118,14 +131,6 @@ class LogCollector
     FileUtils.rm_r(Dir.glob("#{@tmp_path}/*"))
   end
 
-  def get_collect_carriers
-    if @collect_carriers == "all"
-      return CARRIERS
-    end
-
-    return @collect_carriers
-  end
-
   # UIDユニーク(日別)
   def get_dau
     carriers = self.get_collect_carriers
@@ -141,7 +146,7 @@ class LogCollector
             file_path = self.make_tmp_file_path("#{carrier_id}.userSession.log", target_date)
             file_path = "#{@tmp_path}/#{server}/#{site}/#{file_path}"
             if File.exist? file_path
-              cmd = "gzcat #{file_path} | egrep \"#{GREP_KEY}\""
+              cmd = "gzcat #{file_path} | egrep \"#{@grep_key}\""
               data = `#{cmd}`
               data.lines{|line|
                 # http://blog.livedoor.jp/sonots/archives/34702351.html
@@ -196,7 +201,7 @@ class LogCollector
             file_path = self.make_tmp_file_path("#{carrier_id}.userSession.log", target_date)
             file_path = "#{@tmp_path}/#{server}/#{site}/#{file_path}"
             if File.exist? file_path
-              cmd = "gzcat #{file_path} | egrep \"#{GREP_KEY}\""
+              cmd = "gzcat #{file_path} | egrep \"#{@grep_key}\""
               data = `#{cmd}`
               data.lines{|line|
                 # http://blog.livedoor.jp/sonots/archives/34702351.html
