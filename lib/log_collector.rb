@@ -196,6 +196,7 @@ class LogCollector
 
       carriers.each{|carrier, carrier_id|
         uids = []
+        carrier_results[carrier] = {}
         (@begin_date..@end_date).each {|target_date|
           SERVERS.each {|server|
             file_path = self.make_tmp_file_path("#{carrier_id}.userSession.log", target_date)
@@ -209,8 +210,9 @@ class LogCollector
               }
             end
           }
+          carrier_results[carrier][target_date.strftime("%Y/%m/%d")] = uids.uniq
         }
-        carrier_results[carrier] = uids.uniq
+        #carrier_results[carrier] = uids.uniq
       }
       results[site] = carrier_results
     }
@@ -223,11 +225,16 @@ class LogCollector
 
     return_str = ""
     output_carrier_format = "|=. %s|>. %d|\n"
+    output_date_format = "|\\2. %s|\n"
 
     results.each{|site, site_data|
       return_str += "\n\n---------- #{site} ----------\n"
       site_data.each {|carrier, carrier_uids|
-        return_str += sprintf(output_carrier_format, carrier, carrier_uids.size)
+        carrier_uids.each {|date, uids|
+            return_str += sprintf(output_date_format, date)
+            return_str += sprintf(output_carrier_format, carrier, uids.size)
+        }
+        #return_str += sprintf(output_carrier_format, carrier, carrier_uids.size)
       }
     }
     return return_str
