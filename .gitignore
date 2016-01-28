@@ -1,5 +1,3 @@
 /tmp/*
 !/tmp/.keep
 .DS_Store
-
-test.rb
