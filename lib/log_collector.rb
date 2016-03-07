@@ -160,7 +160,6 @@ class LogCollector
         results[site][target_date.strftime("%Y/%m/%d")] = carrier_results
       }
     }
-    #PP.pp(results)
     return results
   end
 
@@ -169,14 +168,14 @@ class LogCollector
     results = self.get_dau
 
     return_str = ""
-    output_date_format = "|\\2. %s|\n"
-    output_carrier_format = "|=. %s|>. %d|\n"
+    output_carrier_format = "%s,%d\n"
+    output_date_format = "%s,"
 
     results.each{|site, site_data|
       return_str += "\n\n---------- #{site} ----------\n"
       site_data.each {|date, carrier_uids|
-        return_str += sprintf(output_date_format, date)
         carrier_uids.each { |carrier, uids|
+          return_str += sprintf(output_date_format, date)
           return_str += sprintf(output_carrier_format, carrier, uids.size)
         }
       }
@@ -212,7 +211,6 @@ class LogCollector
           }
           carrier_results[carrier][target_date.strftime("%Y/%m/%d")] = uids.uniq
         }
-        #carrier_results[carrier] = uids.uniq
       }
       results[site] = carrier_results
     }
@@ -224,17 +222,16 @@ class LogCollector
     results = self.get_user_session
 
     return_str = ""
-    output_carrier_format = "|=. %s|>. %d|\n"
-    output_date_format = "|\\2. %s|\n"
+    output_carrier_format = "%s,%d\n"
+    output_date_format = "%s,"
 
     results.each{|site, site_data|
       return_str += "\n\n---------- #{site} ----------\n"
       site_data.each {|carrier, carrier_uids|
         carrier_uids.each {|date, uids|
-            return_str += sprintf(output_date_format, date)
-            return_str += sprintf(output_carrier_format, carrier, uids.size)
+          return_str += sprintf(output_date_format, date)
+          return_str += sprintf(output_carrier_format, carrier, uids.size)
         }
-        #return_str += sprintf(output_carrier_format, carrier, carrier_uids.size)
       }
     }
     return return_str
