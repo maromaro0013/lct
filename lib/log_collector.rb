@@ -217,6 +217,57 @@ class LogCollector
     return results
   end
 
+  # UIDユニーク(指定期間)(UA付き)
+  def get_user_session_ua
+    carriers = self.get_collect_carriers
+    results = {}
+
+    @sites.each { |site|
+      results[site] = {}
+      carrier_results = {}
+
+      carriers.each{|carrier, carrier_id|
+        uids = []
+        carrier_results[carrier] = {}
+        (@begin_date..@end_date).each {|target_date|
+          SERVERS.each {|server|
+            file_path = self.make_tmp_file_path("#{carrier_id}.userSession.log", target_date)
+            file_path = "#{@tmp_path}/#{server}/#{site}/#{file_path}"
+            if File.exist? file_path
+              cmd = "gzcat #{file_path} | egrep \"#{@grep_key}\""
+              data = `#{cmd}`
+              data.lines{|line|
+                # http://blog.livedoor.jp/sonots/archives/34702351.html
+                user_info = {}
+                user_info[:uid] = line.scrub("!").split(' ')[4]
+                user_info[:ua] = ""
+
+                if line.index("mkb-app") != nil
+                  user_info[:ua] = "APP"
+                elsif line.index("iPhone") != nil
+                  user_info[:ua] = "iPhone"
+                else
+                  user_info[:ua] = "Android_browser"
+                end
+
+                find_ret = nil
+                find_ret = uids.find {|u|
+                  (u[:uid] == user_info[:uid])
+                }
+                if find_ret == nil
+                  uids << user_info
+                end
+              }
+            end
+          }
+          carrier_results[carrier][target_date.strftime("%Y/%m/%d")] = uids.clone
+        }
+      }
+      results[site] = carrier_results
+    }
+    return results
+  end
+
   # UIDユニーク数(指定期間)
   def get_user_session_count
     results = self.get_user_session
