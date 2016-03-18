@@ -238,29 +238,22 @@ class LogCollector
               data = `#{cmd}`
               data.lines{|line|
                 # http://blog.livedoor.jp/sonots/archives/34702351.html
-                user_info = {}
-                user_info[:uid] = line.scrub("!").split(' ')[4]
-                user_info[:ua] = ""
-
+                uid = line.scrub("!").split(' ')[4]
+                ua = ""
                 if line.index("mkb-app") != nil
-                  user_info[:ua] = "APP"
+                  ua = "APP"
                 elsif line.index("iPhone") != nil
-                  user_info[:ua] = "iPhone"
+                  ua = "iPhone"
                 else
-                  user_info[:ua] = "Android_browser"
+                  ua = "Android_browser"
                 end
 
-                find_ret = nil
-                find_ret = uids.find {|u|
-                  (u[:uid] == user_info[:uid])
-                }
-                if find_ret == nil
-                  uids << user_info
-                end
+                user_info = uid + "--split--" + ua
+                uids << user_info
               }
             end
           }
-          carrier_results[carrier][target_date.strftime("%Y/%m/%d")] = uids.clone
+          carrier_results[carrier][target_date.strftime("%Y/%m/%d")] = uids.uniq
         }
       }
       results[site] = carrier_results
